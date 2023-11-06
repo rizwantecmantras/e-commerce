@@ -45,7 +45,7 @@ export default function OptionForm() {
   const [currentOptionValues , setCurrentOptionValues] = useState(storedOptionValueData.filter(
     (optionValue: any) => currentOption.id === optionValue.optionId
   ));
-  
+  //TESTING
   useEffect(() => {
     if (params.mode === 'add') {
       setCurrentOption({'name':'', 'type':''}); // Set currentOption to null when mode is 'add'
