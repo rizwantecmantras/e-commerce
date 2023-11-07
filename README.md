@@ -42,9 +42,17 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Learn More
 
+Example : 
+
+Option : Option Name : Color 
+         Option Values : red , green , black 
+
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+
 =======
 # E-commerce
 >>>>>>> 00e71271e49d25991315169733bea59b44a6f6d4
