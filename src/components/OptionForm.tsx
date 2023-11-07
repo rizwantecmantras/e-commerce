@@ -2,12 +2,28 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
-import { storedOptionData, storedOptionValueData } from "../localstorage";
+
 import Header from "./common/Header";
 import Input from "./common/Input";
 import Select from "./common/Select";
 
 export default function OptionForm() {
+  let storedOptionData: any = [];
+  const storedOptionDataString = localStorage.getItem("options"); // Retrieve the value from local storage
+
+  let storedOptionValueData: any = [];
+  const storedOptionValueString = localStorage.getItem("options_values"); // Retrieve the value from local storage
+
+
+  storedOptionData = storedOptionDataString
+    ? JSON.parse(storedOptionDataString)
+    : [];
+  storedOptionValueData = storedOptionValueString
+    ? JSON.parse(storedOptionValueString)
+    : [];
+
+  console.log("🚀 ~ file: OptionForm.tsx:6 ~ storedOptionValueData:", storedOptionValueData)
+
   const optionsType: any[] = [
     { value: "checkbox", label: "Checkbox" },
     { value: "select", label: "Select" },
@@ -37,10 +53,12 @@ export default function OptionForm() {
       (optionValue: any) => currentOption.id === optionValue.optionId
     )
   );
+  console.log("🚀 ~ file: OptionForm.tsx:40 ~ OptionForm ~ currentOptionValues:", currentOptionValues)
+ 
 
   useEffect(() => {
     if (params.mode === "add") {
-      setCurrentOption({ name: "", type: "" }); // Set currentOption to null when mode is 'add'
+      setCurrentOption({ name: "", type: "checkbox" }); // Set currentOption to null when mode is 'add'
       setOptionId(uuidv4()); // Reset the optionId
       setCurrentOptionValues([]); // Reset the optionValues
     }
@@ -78,6 +96,7 @@ export default function OptionForm() {
       const oldOption = storedOptionData.filter((object: any) => {
         return object.id !== currentOption.id;
       });
+ 
 
       localStorage.setItem(
         "options",
@@ -87,9 +106,12 @@ export default function OptionForm() {
       const oldOptionsValue = storedOptionValueData.filter((object: any) => {
         return object.optionId !== currentOption.id;
       });
-
+      
+      
       const newOptionsValues = [...oldOptionsValue, ...currentOptionValues];
+      console.log("🚀 ~ file: OptionForm.tsx:95 ~ handleSubmit ~ currentOptionValues:", currentOptionValues)
       localStorage.setItem("options_values", JSON.stringify(newOptionsValues));
+
     }
 
     const newOptionId = uuidv4();
@@ -97,9 +119,14 @@ export default function OptionForm() {
   };
 
   /*Change option name , type*/
-  const handleChange = (e: any) => {
+  const handleChange = (e: any) => { 
     setCurrentOption({ ...currentOption, [e.target.name]: e.target.value });
   };
+
+  // useEffect(() => {
+  //   console.log("Updated currentOption:", currentOption);
+  // }, [currentOption]);
+  
 
   /*Add mulitple option values*/
   const addOptionValue = () => {
@@ -118,12 +145,14 @@ export default function OptionForm() {
     setCurrentOptionValues(newInputValues);
   };
 
+  
   /*Delete option values*/
   const handleInputDelete = (index: any) => {
     const options = [...currentOptionValues];
     options.splice(index, 1);
     setCurrentOptionValues([...options]);
   };
+
 
   return (
     <>

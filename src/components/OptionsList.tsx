@@ -37,7 +37,7 @@ export default function OptionsList() {
                 Option Name
                 </th>
                 <th scope="col" className="px-6 py-3">
-                Sort Order
+                Type
                 </th>
                 <th scope="col" className="px-6 py-3">
                 Action
@@ -54,7 +54,7 @@ export default function OptionsList() {
                  >
                  {option.name}
                  </th>
-                 <td className="px-6 py-4">{option.sort}</td>
+                 <td className="px-6 py-4">{option.type}</td>
                  <td className="px-6 py-4">
                  <Link to={`/optionForm/edit/${option.id}`} ><FaEdit/></Link>
                  <button onClick={()=>handleDelete(option.id)} type="button"><FaTrash/></button></td>
