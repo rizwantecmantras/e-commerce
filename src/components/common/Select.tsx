@@ -9,7 +9,7 @@ export default function Select({label, name, options , currentObject , ...rest}:
             >
               {label}
             </label>
-
+      
             <select
               {...rest}
               name={name}
