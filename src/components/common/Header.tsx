@@ -77,7 +77,7 @@ export default function Header() {
           </Link>
         </div>
       </li>
-      <li aria-current="page">
+      <li>
         <div className="flex items-center">
           <svg
             className="w-3 h-3 mx-1 text-gray-400"
@@ -94,7 +94,12 @@ export default function Header() {
               d="m1 9 4-4-4-4"
             />
           </svg>
-           
+          <Link
+            to='/products'
+            className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"
+          >
+            Products
+          </Link>
         </div>
       </li>
     </ol>

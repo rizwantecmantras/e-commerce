@@ -63,7 +63,7 @@ export default function OptionsList() {
            
             </tbody>
         </table>
-        </div>
+      </div>
 
     </>
   )
