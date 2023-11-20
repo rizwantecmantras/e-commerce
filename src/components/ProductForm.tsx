@@ -64,36 +64,178 @@ export default function ProductForm() {
     productOptionValues
   );
 
-  
   //When add product option value
   // const handleAddProductOptionValue = (event:any , productOptionId: any) => {
-  //   setProductOptionValues([...productOptionValues , 
+  //   setProductOptionValues([...productOptionValues ,
   //   {
   //     product_option_id: productOptionId,
   //     product_option_value_id: uuidv4()
   //   }]);
   // };
 
+  const handleAddProductOptionValue = (event: any, productOptionId: any) => {
+    const index = productOptionValues.findIndex(
+      (item: any) => Object.keys(item)[0] === productOptionId
+    );
 
-  const handleAddProductOptionValue = (event:any , productOptionId: any) => {
-    setProductOptionValues([...productOptionValues , 
-    {
-      product_option_id: productOptionId,
-      product_option_value_id: uuidv4()
-    }]);
+    if (index !== -1) {
+      const updatedValues = [...productOptionValues];
+      updatedValues[index][productOptionId].push({
+        product_option_id: productOptionId,
+        product_option_value_id: uuidv4(),
+        // option_value_id:'',
+      }); // Just for demonstration
+      setProductOptionValues(updatedValues);
+    } else {
+      const newObj: {
+        [key: string]: Array<{
+          product_option_id: number;
+          product_option_value_id: string;
+          option_value_id: string;
+          quantity: string;
+          price: string;
+        }>;
+      } = {};
+      newObj[productOptionId] = [
+        {
+          product_option_id: productOptionId,
+          product_option_value_id: uuidv4(),
+          option_value_id: "",
+          quantity: "",
+          price: "",
+        },
+      ]; // Just for demonstration
+      setProductOptionValues([...productOptionValues, newObj]);
+    }
   };
-   
+
+  // //When delete product option value
+  // const handleDeleteProductOptionValue = (
+  //   event: any,
+  //   product_option_value_id: any
+  // ) => {
+  //   console.log("🚀 ~ file: ProductForm.tsx:110 ~ ProductForm ~ product_option_value_id:", product_option_value_id)
+  //   let items = [...productOptionValues];
+  //   items = items.filter(
+  //     (item) => item.product_option_value_id !== product_option_value_id
+  //   );
+  //   setProductOptionValues(items);
+  //   console.log("🚀 ~ file: ProductForm.tsx:115 ~ ProductForm ~ items:", items)
+  // };
+
+  /*const handleDeleteProductOptionValue = (
+    event: any,
+    product_option_value_id: any
+  ) => {
+    interface ProductOption {
+      product_option_id: string;
+      product_option_value_id: string;
+    }
+
+    interface ProductOptions {
+      [key: string]: ProductOption[];
+    }
+
+    // Assuming productOptionValues is of type ProductOptions[]
+    let items: ProductOptions[] = [...productOptionValues];
+
+    items = items.map((item) => {
+      const key = Object.keys(item)[0];
+      const options = item[key];
+
+      if (Array.isArray(options)) {
+        const filteredOptions = options.filter(
+          (option) => option.product_option_value_id !== product_option_value_id
+        );
+        item[key] = filteredOptions;
+      }
+      return item;
+    });
+
+    items = items.filter((item) => {
+      console.log(
+        "🚀 ~ file: ProductForm.tsx:154 ~ items=items.filter ~ item:",
+        item
+      );
+      const key = Object.keys(item)[0];
+      const options = item[key];
+      return Array.isArray(options) && options.length > 0;
+    });
+
+    setProductOptionValues(items);
+  };*/
+
+
+  const handleDeleteProductOptionValue = (
+    event: any,
+    product_option_id:any,
+    product_option_value_id: any
+  ) => {
+    // Create a copy of the state
+    const updatedProductOptionValues = productOptionValues.map((item: any) => {
+      const key = Object.keys(item)[0];
+  
+      if (key === product_option_id) {
+        // Filter out the item with the specified product_option_value_id
+        const filteredItem = item[product_option_id].filter(
+          (option: any) => option.product_option_value_id !== product_option_value_id
+        );
+  
+        // Return the updated item for the specific key
+        return {
+          [product_option_id]: filteredItem,
+        };
+      }
+  
+      return item;
+    });
+
+    console.log("🚀 ~ file: ProductForm.tsx:195 ~ ProductForm ~ updatedProductOptionValues:", updatedProductOptionValues)
+  
+    // Update the state with the modified value
+    setProductOptionValues(updatedProductOptionValues);
+    
+  };
+  
   
 
-    //When delete product option value
-    const handleDeleteProductOptionValue = (event:any , product_option_value_id: any) => {
-      let items = [...productOptionValues];
-      items = items.filter((item)=> item.product_option_value_id !== product_option_value_id)
-      setProductOptionValues(items);
-    };
- 
-    
-    
+  const handleProductOptionValue = (
+    e: any,
+    product_option_id: any,
+    product_option_value_id: any
+  ) => {
+    console.log("ProductOptionValue", e.target.name, e.target.value);
+  
+    // Create a copy of the state
+    const updatedProductOptionValues = productOptionValues.map((item:any) => {
+      const key = Object.keys(item)[0];
+  
+      if (key === product_option_id) {
+        // Find the specific item to update
+        const updatedItem = item[product_option_id].map((option: any) => {
+          if (option.product_option_value_id === product_option_value_id) {
+            // Update the value based on the event target
+            return {
+              ...option,
+              [e.target.name]: e.target.value,
+            };
+          }
+          return option;
+        });
+  
+        // Return the updated item for the specific key
+        return {
+          [product_option_id]: updatedItem,
+        };
+      }
+  
+      return item;
+    });
+  
+    // Update the state with the modified value
+    setProductOptionValues(updatedProductOptionValues);
+  };
+  
 
   const handleOptionChange = (e: any) => {
     const option = optionsType.find(
@@ -225,67 +367,124 @@ export default function ProductForm() {
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tbody>  
-                  {productOptionValues && productOptionValues.map((productOptionValueEach:any)=>(
-                    
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <td className="px-6 py-4">
-                        <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                          {storedOptionValueData
-                            .filter(
-                              (option: any) =>
-                                option.optionId ===
-                                productOptionEach.option_id
-                            )
-                            .map((item: any) => (
-                              <option>{item.optionValueName}</option>
-                            ))}
-                        </select>
-                      </td>
+                  <tbody>
+                    <div>
+                      {productOptionValues.map((item: any, index: any) => (
+                        <div key={index}>
+                          {Object.keys(item).map((key) => {
+                            // Your comparison condition
+                            if (productOptionEach.product_option_id === key) {
+                              return (
+                                <div key={key}>
+                                  <div>
+                                    <strong>Main Key: {key}</strong>
+                                  </div>
+                                  <div>
+                                    {item[key].map((option: any, i: any) => (
+                                      <div key={i}>
+                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                          <td className="px-6 py-4">
+                                            <select
+                                              name="option_value_id"
+                                              onChange={(e) => {
+                                                handleProductOptionValue(
+                                                  e,
+                                                  productOptionEach.product_option_id,
+                                                  option.product_option_value_id
+                                                );
+                                              }}
+                                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            >
+                                              {storedOptionValueData
+                                                .filter(
+                                                  (option: any) =>
+                                                    option.optionId ===
+                                                    productOptionEach.option_id
+                                                )
+                                                .map((item: any) => (
+                                                  <option value={item.id}>
+                                                    {item.optionValueName}
+                                                  </option>
+                                                ))}
+                                            </select>
+                                          </td>
 
-                      <td className="px-6 py-4">
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          name="quantity"
-                          type="text"
-                        />
-                      </td>
+                                          <td className="px-6 py-4">
+                                            <input
+                                              onChange={(e) => {
+                                                handleProductOptionValue(
+                                                  e,
+                                                  productOptionEach.product_option_id,
+                                                  option.product_option_value_id
+                                                );
+                                              }}
+                                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                              name="quantity"
+                                              type="text"
+                                            />
+                                          </td>
 
-                      <td className="px-6 py-4">
-                        <input
-                          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          name="price"
-                          type="text"
-                        />
-                      </td>
-    
-                      <td className="">
+                                          <td className="px-6 py-4">
+                                            <input
+                                              onChange={(e) => {
+                                                handleProductOptionValue(
+                                                  e,
+                                                  productOptionEach.product_option_id,
+                                                  option.product_option_value_id
+                                                );
+                                              }}
+                                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                              name="price"
+                                              type="text"
+                                            />
+                                          </td>
+
+                                          <td className="">
+                                            <button
+                                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                              type="button"
+                                              onClick={(event) =>
+                                                handleDeleteProductOptionValue(
+                                                  event,
+                                                  productOptionEach.product_option_id,
+                                                  option.product_option_value_id
+                                                )
+                                              }
+                                            >
+                                              <FaMinusSquare />
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null; // If the condition isn't met, return null or handle it accordingly
+                          })}
+                        </div>
+                      ))}
+                    </div>
+
+                    <tr>
+                      <td colSpan={3}></td>
+                      <td>
                         <button
                           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                           type="button"
-                          onClick={(event) => handleDeleteProductOptionValue(event, productOptionValueEach.product_option_value_id)}
+                          onClick={(event) =>
+                            handleAddProductOptionValue(
+                              event,
+                              productOptionEach.product_option_id
+                            )
+                          }
                         >
-                          <FaMinusSquare />
+                          <FaPlusSquare />
                         </button>
                       </td>
                     </tr>
-                  ))
-                    }
-                     <tr>
-                        <td colSpan={3}></td>
-                        <td>
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            type="button"
-                            onClick={(event) =>
-                              handleAddProductOptionValue(event, productOptionEach.product_option_id)
-                            }
-                          >
-                            <FaPlusSquare />
-                          </button>
-                        </td>
-                      </tr>
-                   </tbody>
+                  </tbody>
                 </table>
               </div>
             </>
