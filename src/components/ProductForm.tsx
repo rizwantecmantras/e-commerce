@@ -109,93 +109,64 @@ export default function ProductForm() {
     }
   };
 
-  // //When delete product option value
   // const handleDeleteProductOptionValue = (
   //   event: any,
+  //   product_option_id: any,
   //   product_option_value_id: any
   // ) => {
-  //   console.log("🚀 ~ file: ProductForm.tsx:110 ~ ProductForm ~ product_option_value_id:", product_option_value_id)
-  //   let items = [...productOptionValues];
-  //   items = items.filter(
-  //     (item) => item.product_option_value_id !== product_option_value_id
-  //   );
-  //   setProductOptionValues(items);
-  //   console.log("🚀 ~ file: ProductForm.tsx:115 ~ ProductForm ~ items:", items)
+  //   const updatedProductOptionValues = productOptionValues.map((item: any) => {
+  //     const key = Object.keys(item)[0];
+    
+  //     if (key === product_option_id) {
+  //       const updatedOptions = item[key].filter(
+  //         (option: any) => option.product_option_value_id !== product_option_value_id
+  //       );
+  //       console.log("🚀 ~ file: ProductForm.tsx:212 ~ updatedProductOptionValues ~ updatedOptions:", updatedOptions)
+  
+  //       // Update the item only if options are updated
+  //       if (updatedOptions.length !== item[key].length) {
+  //         return {
+  //           [key]: updatedOptions,
+  //         };
+  //       }
+  //     }
+    
+  //     return item;
+  //   });
+  //   console.log("🚀 ~ file: ProductForm.tsx:223 ~ updatedProductOptionValues ~ updatedProductOptionValues:", updatedProductOptionValues)
+  
+  //   setProductOptionValues(updatedProductOptionValues.filter((item:any) => item)); // Remove null or undefined items if any
   // };
-
-  /*const handleDeleteProductOptionValue = (
-    event: any,
-    product_option_value_id: any
-  ) => {
-    interface ProductOption {
-      product_option_id: string;
-      product_option_value_id: string;
-    }
-
-    interface ProductOptions {
-      [key: string]: ProductOption[];
-    }
-
-    // Assuming productOptionValues is of type ProductOptions[]
-    let items: ProductOptions[] = [...productOptionValues];
-
-    items = items.map((item) => {
-      const key = Object.keys(item)[0];
-      const options = item[key];
-
-      if (Array.isArray(options)) {
-        const filteredOptions = options.filter(
-          (option) => option.product_option_value_id !== product_option_value_id
-        );
-        item[key] = filteredOptions;
-      }
-      return item;
-    });
-
-    items = items.filter((item) => {
-      console.log(
-        "🚀 ~ file: ProductForm.tsx:154 ~ items=items.filter ~ item:",
-        item
-      );
-      const key = Object.keys(item)[0];
-      const options = item[key];
-      return Array.isArray(options) && options.length > 0;
-    });
-
-    setProductOptionValues(items);
-  };*/
 
 
   const handleDeleteProductOptionValue = (
     event: any,
-    product_option_id:any,
+    product_option_id: any,
     product_option_value_id: any
   ) => {
-    // Create a copy of the state
     const updatedProductOptionValues = productOptionValues.map((item: any) => {
       const key = Object.keys(item)[0];
+     
   
       if (key === product_option_id) {
-        // Filter out the item with the specified product_option_value_id
-        const filteredItem = item[product_option_id].filter(
+        const updatedOptions = item[key].filter(
           (option: any) => option.product_option_value_id !== product_option_value_id
         );
+         
   
-        // Return the updated item for the specific key
         return {
-          [product_option_id]: filteredItem,
+          [key]: updatedOptions,
         };
       }
-  
+      console.log("🚀 ~ file: ProductForm.tsx:163 ~ updatedProductOptionValues ~ item:", item)
       return item;
+     
     });
-
-    console.log("🚀 ~ file: ProductForm.tsx:195 ~ ProductForm ~ updatedProductOptionValues:", updatedProductOptionValues)
   
-    // Update the state with the modified value
     setProductOptionValues(updatedProductOptionValues);
-    
   };
+  
+  
   
   
 
@@ -348,6 +319,7 @@ export default function ProductForm() {
 
           {productOption?.map((productOptionEach: any, index: any) => (
             <>
+             {console.log("rendering")}
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {productOptionEach.name}
               </label>
@@ -374,15 +346,19 @@ export default function ProductForm() {
                           {Object.keys(item).map((key) => {
                             // Your comparison condition
                             if (productOptionEach.product_option_id === key) {
+                              {console.log("rendering in if")}
                               return (
                                 <div key={key}>
                                   <div>
                                     <strong>Main Key: {key}</strong>
                                   </div>
-                                  <div>
+                                     
                                     {item[key].map((option: any, i: any) => (
-                                      <div key={i}>
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                      <>
+                                        {/* <div key={i}> */}
+                                        {option.option_value_id} -<b> {option.quantity} </b> - <i>{option.price}</i>
+
+                                       <tr key={i} className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 ${i}`}>
                                           <td className="px-6 py-4">
                                             <select
                                               name="option_value_id"
@@ -395,6 +371,7 @@ export default function ProductForm() {
                                               }}
                                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                             >
+                                              <option disabled>--SELECT--</option>
                                               {storedOptionValueData
                                                 .filter(
                                                   (option: any) =>
@@ -402,7 +379,9 @@ export default function ProductForm() {
                                                     productOptionEach.option_id
                                                 )
                                                 .map((item: any) => (
-                                                  <option value={item.id}>
+                                                  <option value={item.id}
+                                                  selected={option.option_value_id === item.id ? true : false}
+                                                  >
                                                     {item.optionValueName}
                                                   </option>
                                                 ))}
@@ -421,6 +400,7 @@ export default function ProductForm() {
                                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                               name="quantity"
                                               type="text"
+                                              value={option.quantity}
                                             />
                                           </td>
 
@@ -436,6 +416,7 @@ export default function ProductForm() {
                                               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                               name="price"
                                               type="text"
+                                              value={option.price}
                                             />
                                           </td>
 
@@ -454,13 +435,17 @@ export default function ProductForm() {
                                               <FaMinusSquare />
                                             </button>
                                           </td>
-                                        </tr>
-                                      </div>
+                                       
+                                       </tr>
+                                          
+                                         {/* </div>    */}
+                                      </>
                                     ))}
-                                  </div>
+                                   
                                 </div>
                               );
                             }
+                            {console.log("rendering after if")}
                             return null; // If the condition isn't met, return null or handle it accordingly
                           })}
                         </div>
